@@ -229,8 +229,14 @@ a{color:var(--primary-light)}
 .st-faltou{background:rgba(255,77,109,.13);color:var(--danger)} .st-faltou .sd{background:var(--danger)}
 .st-cancelado{background:rgba(255,77,109,.1);color:var(--danger)} .st-cancelado .sd{background:var(--danger)}
 
-.appt .menu-btn{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--txt-3);cursor:pointer;display:grid;place-items:center;opacity:0;transition:.15s}
+.appt .menu-btn{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--txt-3);cursor:pointer;display:grid;place-items:center;opacity:.5;transition:.15s}
 .appt:hover .menu-btn{opacity:1}
+.appt-share{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.ash{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);color:var(--txt-2);border-radius:10px;padding:6px 11px;font-size:11.5px;font-weight:700;cursor:pointer;transition:.14s}
+.ash svg{width:14px;height:14px}
+.ash:hover{color:var(--txt);border-color:var(--border-soft);transform:translateY(-1px)}
+.ash:active{transform:scale(.95)}
+.ash.wa{color:#25D366} .ash.wa:hover{border-color:rgba(37,211,102,.55)}
 .appt .menu-btn:hover{background:var(--surface);color:var(--txt)}
 .appt .menu-btn svg{width:16px;height:16px}
 .cardmenu{position:absolute;top:38px;right:10px;z-index:5;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5);padding:6px;min-width:194px;display:none}

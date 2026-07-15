@@ -281,16 +281,16 @@
         <div class="foot"><span class="avatar" style="background:linear-gradient(135deg,${c.cor},color-mix(in srgb,${c.cor} 55%,#000))">${initials(c.nome)}</span>
           <span class="corretor">${esc((c.nome || "").split(" ")[0])}</span>
           <span class="status st-${a.status}"><span class="sd"></span>${statusLabel(a.status)}</span></div>
+        <div class="appt-share">
+          <button class="ash" data-share="cal" data-id="${a.id}" title="Adicionar ao Google Agenda">${I.calendar}<span>Agenda</span></button>
+          <button class="ash" data-share="mail" data-id="${a.id}" title="Enviar e-mail ao cliente">${I.mail}<span>E-mail</span></button>
+          <button class="ash wa" data-share="wa" data-id="${a.id}" title="Lembrar no WhatsApp">${I.whats}<span>WhatsApp</span></button>
+        </div>
       </div>
       <button class="menu-btn" data-menu="${a.id}" aria-label="Opções">${I.more}</button>
       <div class="cardmenu" id="menu-${a.id}">
         <button data-act="confirmar" data-id="${a.id}">${I.check} Confirmar</button>
         <button data-act="concluir" data-id="${a.id}">${I.check} Marcar concluído</button>
-        <div class="cm-div"></div>
-        <button data-share="cal" data-id="${a.id}">${I.calendar} Google Agenda</button>
-        <button data-share="mail" data-id="${a.id}">${I.mail} Enviar e-mail</button>
-        <button data-share="wa" data-id="${a.id}">${I.whats} Lembrar no WhatsApp</button>
-        <div class="cm-div"></div>
         <button class="danger" data-act="cancelar" data-id="${a.id}">${I.x} Cancelar</button>
       </div></div>`;
   }
