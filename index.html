@@ -156,7 +156,16 @@
     <div class="field"><label for="fCliente">Cliente</label><input class="input" id="fCliente" placeholder="Nome do cliente" autocomplete="off" /></div>
     <div class="err" id="errCliente">Informe o nome do cliente.</div>
     <div class="field"><label for="fFone">Telefone</label><input class="input" id="fFone" placeholder="(11) 9 9999-9999" inputmode="tel" autocomplete="off" /></div>
-    <div class="field"><label for="fImovel">Imóvel</label><select class="input" id="fImovel"></select></div>
+    <div class="field">
+      <label>Localização do imóvel</label>
+      <div class="two" style="margin-bottom:10px">
+        <input class="input" id="fCep" placeholder="CEP (00000-000)" inputmode="numeric" maxlength="9" autocomplete="off" />
+        <input class="input" id="fNumero" placeholder="Número" autocomplete="off" />
+      </div>
+      <input class="input" id="fRua" placeholder="Rua / Avenida" autocomplete="off" style="margin-bottom:10px" />
+      <input class="input" id="fBairro" placeholder="Bairro · Cidade" autocomplete="off" />
+      <div id="cepHint" style="font-size:11px;color:var(--txt-3);margin-top:7px">Digite o CEP que eu preencho a rua e o bairro pra você.</div>
+    </div>
     <div class="field"><label for="fNota">Observação <span style="color:var(--txt-3);font-weight:600">· opcional</span></label><input class="input" id="fNota" placeholder="Ex.: busca 2 dorm, primeira visita…" autocomplete="off" /></div>
     <div class="field"><label>Corretor responsável</label><div class="segs" id="corrSegs"></div></div>
     <div class="two">

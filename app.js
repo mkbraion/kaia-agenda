@@ -41,16 +41,6 @@
     assinatura: { label: "Assinatura", color: "#00E5A0", icon: I.doc },
     captacao: { label: "Captação", color: "#FF4D6D", icon: I.key },
   };
-  const IMOVEIS = [
-    { cod: "RX-1042", endereco: "Apto 3 dorm · Rua Oscar Freire, 820", bairro: "Jardins", preco: "R$ 1.280.000" },
-    { cod: "RX-2087", endereco: "Casa térrea · Al. dos Nhambiquaras, 145", bairro: "Moema", preco: "R$ 2.150.000" },
-    { cod: "RX-1188", endereco: "Cobertura duplex · Av. Ibirapuera, 2200", bairro: "Indianópolis", preco: "R$ 3.400.000" },
-    { cod: "RX-3310", endereco: "Studio 42m² · Rua Augusta, 1500", bairro: "Consolação", preco: "R$ 640.000" },
-    { cod: "RX-2455", endereco: "Apto 2 dorm · Rua Vergueiro, 3100", bairro: "Vila Mariana", preco: "R$ 890.000" },
-    { cod: "RX-1975", endereco: "Sobrado · Rua Harmonia, 480", bairro: "Vila Madalena", preco: "R$ 1.760.000" },
-    { cod: "RX-4021", endereco: "Sala comercial · Av. Paulista, 900", bairro: "Bela Vista", preco: "R$ 1.050.000" },
-  ];
-  const imById = (cod) => IMOVEIS.find((i) => i.cod === cod) || IMOVEIS[0];
   const HORAS = ["08:00","09:00","10:00","11:00","12:00","14:00","15:00","16:00","17:00","18:00","19:00"];
 
   /* ---------- datas ---------- */
@@ -88,22 +78,23 @@
 
   /* ---------- links de compartilhamento (1 toque, sem configuração) ---------- */
   function calStamp(d) { return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + "T" + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + "00Z"; }
+  const imovelFull = (a) => [a.imovel_endereco, a.imovel_bairro].filter(Boolean).join(" · ") || "o imóvel combinado";
   function calUrl(a) {
-    const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), s = new Date(a.dt), e = new Date(a.dt + a.dur * 60000);
-    const details = `Imóvel ${im.cod} — ${im.endereco}\nCliente: ${a.cliente}${a.telefone && a.telefone !== "—" ? " · " + a.telefone : ""}${a.nota ? "\n" + a.nota : ""}`;
+    const t = TYPES[a.tipo] || TYPES.visita, s = new Date(a.dt), e = new Date(a.dt + a.dur * 60000);
+    const details = `Imóvel: ${imovelFull(a)}\nCliente: ${a.cliente}${a.telefone && a.telefone !== "—" ? " · " + a.telefone : ""}${a.nota ? "\n" + a.nota : ""}`;
     return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(`${t.label} — ${a.cliente}`) +
-      "&dates=" + calStamp(s) + "/" + calStamp(e) + "&details=" + encodeURIComponent(details) + "&location=" + encodeURIComponent(im.endereco);
+      "&dates=" + calStamp(s) + "/" + calStamp(e) + "&details=" + encodeURIComponent(details) + "&location=" + encodeURIComponent(a.imovel_endereco || "");
   }
   function mailUrl(a) {
-    const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), d = new Date(a.dt);
-    const su = `${t.label} — ${im.cod} · ${relDayShort(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    const body = `Olá ${a.cliente},\n\nConfirmando sua ${t.label.toLowerCase()} com a RE/MAX Londero:\n\n• Imóvel: ${im.cod} — ${im.endereco}\n• Data: ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}\n\nQualquer dúvida, estou à disposição.`;
+    const t = TYPES[a.tipo] || TYPES.visita, d = new Date(a.dt);
+    const su = `${t.label} — ${relDayShort(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const body = `Olá ${a.cliente},\n\nConfirmando sua ${t.label.toLowerCase()} com a RE/MAX Londero:\n\n• Imóvel: ${imovelFull(a)}\n• Data: ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}\n\nQualquer dúvida, estou à disposição.`;
     return "https://mail.google.com/mail/?view=cm&fs=1&su=" + encodeURIComponent(su) + "&body=" + encodeURIComponent(body);
   }
   function phoneDigits(f) { let d = (f || "").replace(/\D/g, ""); if (!d) return ""; if (d.length === 10 || d.length === 11) d = "55" + d; return d; }
   function waUrl(a) {
-    const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), d = new Date(a.dt);
-    const msg = `Olá ${a.cliente}! Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX Londero ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${im.cod} (${im.endereco}). Podemos confirmar?`;
+    const t = TYPES[a.tipo] || TYPES.visita, d = new Date(a.dt);
+    const msg = `Olá ${a.cliente}! Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX Londero ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${imovelFull(a)}. Podemos confirmar?`;
     return "https://wa.me/" + phoneDigits(a.telefone) + "?text=" + encodeURIComponent(msg);
   }
 
@@ -271,12 +262,12 @@
   }
 
   function apptCard(a, idx, isNext) {
-    const t = TYPES[a.tipo] || TYPES.visita, c = corrById(a.corretor_id), im = imById(a.imovel_cod), d = new Date(a.dt);
+    const t = TYPES[a.tipo] || TYPES.visita, c = corrById(a.corretor_id), d = new Date(a.dt);
     return `<div class="appt reveal${isNext ? " is-next" : ""}" data-id="${a.id}" style="animation-delay:${Math.min(idx * 45, 360)}ms">
       <div class="time"><div class="h tnum">${pad(d.getHours())}:${pad(d.getMinutes())}</div><div class="dur">${a.dur}min</div></div>
       <div class="body">
         <div class="row1"><span class="cli">${esc(a.cliente)}</span><span class="type-chip" style="background:color-mix(in srgb,${t.color} 15%,transparent);color:${t.color}">${t.icon}${t.label}</span></div>
-        <div class="meta">${I.pin}<span class="addr">${esc(im.endereco)}</span><span class="code">${im.cod}</span></div>
+        <div class="meta">${I.pin}<span class="addr">${esc(a.imovel_endereco || "Local a definir")}</span>${a.imovel_bairro ? `<span class="code">${esc(a.imovel_bairro)}</span>` : ""}</div>
         ${a.nota ? `<div class="note">${I.note}<span>${esc(a.nota)}</span></div>` : ""}
         <div class="foot"><span class="avatar" style="background:linear-gradient(135deg,${c.cor},color-mix(in srgb,${c.cor} 55%,#000))">${initials(c.nome)}</span>
           <span class="corretor">${esc((c.nome || "").split(" ")[0])}</span>
@@ -326,12 +317,12 @@
   function renderSpot() {
     const el = $("spot"), a = nextAppt();
     if (!a) { el.innerHTML = `<div class="glow"></div><div class="eyebrow"><span class="live"></span> Sua próxima visita</div><div class="cd">—</div><div class="when">Nenhuma visita futura agendada</div>`; if (cdTimer) clearInterval(cdTimer); return; }
-    const t = TYPES[a.tipo] || TYPES.visita, c = corrById(a.corretor_id), im = imById(a.imovel_cod), d = new Date(a.dt);
+    const t = TYPES[a.tipo] || TYPES.visita, c = corrById(a.corretor_id), d = new Date(a.dt);
     el.innerHTML = `<div class="glow"></div><div class="eyebrow"><span class="live"></span> Sua próxima ${t.label.toLowerCase()}</div>
       <div class="cd tnum" id="cd">—</div><div class="when" id="cdWhen">${relDay(d)} · ${pad(d.getHours())}:${pad(d.getMinutes())}</div>
       <div class="sp-cli">${esc(a.cliente)}</div>
-      <div class="sp-line">${I.pin}<span>${esc(im.endereco)}</span></div>
-      <div class="sp-line">${I.home}<span>${im.cod} · ${im.bairro} · ${im.preco}</span></div>
+      <div class="sp-line">${I.pin}<span>${esc(a.imovel_endereco || "Local a definir")}</span></div>
+      ${a.imovel_bairro ? `<div class="sp-line">${I.home}<span>${esc(a.imovel_bairro)}</span></div>` : ""}
       <div class="sp-line"><span class="avatar" style="width:16px;height:16px;font-size:8px;background:linear-gradient(135deg,${c.cor},color-mix(in srgb,${c.cor} 55%,#000))">${initials(c.nome)}</span><span>${esc(c.nome)}</span></div>
       ${a.nota ? `<div class="sp-line">${I.note}<span>${esc(a.nota)}</span></div>` : ""}
       <div class="sp-actions"><button class="sp-btn" data-act="confirmar" data-id="${a.id}">${I.check} Confirmar</button><button class="sp-btn go" data-act="reagendar" data-id="${a.id}">${I.clock} Reagendar</button></div>`;
@@ -390,7 +381,27 @@
   /* ============================================================
      SLIDE-OVER (novo agendamento)
      ============================================================ */
-  function fillImovelSelect() { $("fImovel").innerHTML = IMOVEIS.map((im) => `<option value="${im.cod}">${im.cod} · ${esc(im.endereco)} · ${im.bairro}</option>`).join(""); }
+  async function lookupCep() {
+    const raw = ($("fCep").value || "").replace(/\D/g, "");
+    if (raw.length !== 8) return;
+    $("cepHint").textContent = "Buscando endereço…";
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
+      const j = await r.json();
+      if (j && !j.erro) {
+        if (j.logradouro) $("fRua").value = j.logradouro;
+        $("fBairro").value = [j.bairro, j.localidade ? j.localidade + (j.uf ? "/" + j.uf : "") : ""].filter(Boolean).join(" · ");
+        $("cepHint").textContent = "Endereço preenchido — confira e coloque o número.";
+        $("fNumero").focus();
+      } else { $("cepHint").textContent = "CEP não encontrado — pode digitar o endereço na mão."; }
+    } catch (e) { $("cepHint").textContent = "Não consegui buscar agora — digite o endereço na mão."; }
+  }
+  function maskCep() {
+    let v = ($("fCep").value || "").replace(/\D/g, "").slice(0, 8);
+    if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5);
+    $("fCep").value = v;
+    if (v.replace(/\D/g, "").length === 8) lookupCep();
+  }
   function renderTypeSegs() { $("typeSegs").innerHTML = Object.entries(TYPES).map(([k, t]) => `<button class="seg${form.tipo === k ? " on" : ""}" data-type="${k}" style="--sc:${t.color}">${t.icon}${t.label}</button>`).join(""); }
   function renderCorrSegs() { $("corrSegs").innerHTML = corretores.length ? corretores.map((c) => `<button class="seg${form.corr === c.id ? " on" : ""}" data-cseg="${c.id}" style="--sc:${c.cor}">${esc((c.nome || "").split(" ")[0])}</button>`).join("") : `<span style="font-size:12.5px;color:var(--txt-2)">Cadastre corretores no painel do dono.</span>`; }
   function renderTimeGrid() {
@@ -404,7 +415,9 @@
   function openSheet(prefill) {
     form = { tipo: "visita", corr: corretores[0] ? corretores[0].id : null, hora: prefill && prefill.hora ? prefill.hora : null, dur: 45 };
     $("fCliente").value = ""; $("fFone").value = ""; $("fNota").value = ""; $("fDur").value = "45"; $("fData").value = dayKey(new Date());
-    fillImovelSelect(); renderTypeSegs(); renderCorrSegs(); renderTimeGrid();
+    $("fCep").value = ""; $("fRua").value = ""; $("fNumero").value = ""; $("fBairro").value = "";
+    $("cepHint").textContent = "Digite o CEP que eu preencho a rua e o bairro pra você.";
+    renderTypeSegs(); renderCorrSegs(); renderTimeGrid();
     $("errCliente").classList.remove("show"); $("errHora").classList.remove("show");
     $("scrim").classList.add("open"); $("sheet").classList.add("open");
     setTimeout(() => $("fCliente").focus(), 340);
@@ -417,13 +430,15 @@
     if (!form.hora) { $("errHora").classList.add("show"); ok = false; } else $("errHora").classList.remove("show");
     if (!form.corr) { toast("Sem corretor", "Cadastre um corretor primeiro.", "warn"); ok = false; }
     if (!ok) return;
+    const rua = $("fRua").value.trim(), numero = $("fNumero").value.trim(), bairro = $("fBairro").value.trim(), cep = $("fCep").value.trim();
+    if (!rua) { toast("Falta o endereço", "Informe a rua/avenida do imóvel (o CEP ajuda a preencher).", "warn"); return; }
+    const endereco = numero ? `${rua}, ${numero}` : rua;
     const dv = $("fData").value, [hh, mm] = form.hora.split(":").map(Number), dt = new Date(dv + "T00:00:00"); dt.setHours(hh, mm, 0, 0);
-    const im = imById($("fImovel").value);
     const btn = $("saveAppt"); btn.disabled = true;
     try {
       const rec = await Data.appointments.add({
         corretor_id: form.corr, cliente: cli, telefone: $("fFone").value.trim() || "—", tipo: form.tipo,
-        imovel_cod: im.cod, imovel_endereco: im.endereco, imovel_bairro: im.bairro, imovel_preco: im.preco,
+        imovel_cod: null, imovel_cep: cep, imovel_endereco: endereco, imovel_bairro: bairro, imovel_preco: null,
         dt: dt.getTime(), dur: +$("fDur").value, status: "confirmado", nota: $("fNota").value.trim(),
       });
       appts.push(rec); closeSheet();
@@ -532,6 +547,8 @@
     $("corrSegs").addEventListener("click", (e) => { const b = e.target.closest("[data-cseg]"); if (!b) return; form.corr = b.dataset.cseg; renderCorrSegs(); });
     $("timeGrid").addEventListener("click", (e) => { const b = e.target.closest("[data-time]"); if (!b || b.disabled) return; form.hora = b.dataset.time; renderTimeGrid(); $("errHora").classList.remove("show"); });
     $("fData").addEventListener("change", () => { form.hora = null; renderTimeGrid(); });
+    $("fCep").addEventListener("input", maskCep);
+    $("fCep").addEventListener("blur", lookupCep);
 
     // topbar
     $("userChip").addEventListener("click", (e) => { e.stopPropagation(); $("userMenu").classList.toggle("open"); });

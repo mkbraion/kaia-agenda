@@ -30,7 +30,7 @@
      MODO DEMO (localStorage)
      ============================================================ */
   const LS_USERS = "kaia_users_v1";
-  const LS_APPTS = "kaia_appts_v3";
+  const LS_APPTS = "kaia_appts_v4";
   const LS_SESSION = "kaia_session_v1";
 
   const DEMO_CORRETORES = [
@@ -78,9 +78,20 @@
       "Bruno Tavares": "Não compareceu na última — vale reconfirmar antes.",
       "Helena Costa": "Contrato assinado, cliente satisfeita.",
     };
+    const IMOV = {
+      "RX-1042": ["Rua Oscar Freire, 820", "Jardins · São Paulo/SP"],
+      "RX-2087": ["Al. dos Nhambiquaras, 145", "Moema · São Paulo/SP"],
+      "RX-1188": ["Av. Ibirapuera, 2200", "Indianópolis · São Paulo/SP"],
+      "RX-3310": ["Rua Augusta, 1500", "Consolação · São Paulo/SP"],
+      "RX-2455": ["Rua Vergueiro, 3100", "Vila Mariana · São Paulo/SP"],
+      "RX-1975": ["Rua Harmonia, 480", "Vila Madalena · São Paulo/SP"],
+      "RX-4021": ["Av. Paulista, 900", "Bela Vista · São Paulo/SP"],
+    };
     const mk = (off, h, m, tipo, corr, cli, fone, imv, status) => ({
       id: rid("a"), dt: at(h, m, off), dur: tipo === "reuniao" ? 60 : tipo === "assinatura" ? 90 : 45,
-      tipo, corretor_id: corr, cliente: cli, telefone: fone, imovel_cod: imv, status, nota: NOTES[cli] || "", created_by: "admin1",
+      tipo, corretor_id: corr, cliente: cli, telefone: fone, imovel_cod: imv,
+      imovel_endereco: (IMOV[imv] || ["", ""])[0], imovel_bairro: (IMOV[imv] || ["", ""])[1],
+      status, nota: NOTES[cli] || "", created_by: "admin1",
     });
     const rows = [
       mk(-2, 10, 0, "visita", "c1", "Fernanda Lima", "(11) 9 8123-4567", "RX-1042", "concluido"),
@@ -196,7 +207,7 @@
       async add(a) {
         if (SUPA_ON) {
           const row = { corretor_id: a.corretor_id, cliente: a.cliente, telefone: a.telefone, tipo: a.tipo,
-            imovel_cod: a.imovel_cod, imovel_endereco: a.imovel_endereco, imovel_bairro: a.imovel_bairro, imovel_preco: a.imovel_preco,
+            imovel_cod: a.imovel_cod, imovel_cep: a.imovel_cep, imovel_endereco: a.imovel_endereco, imovel_bairro: a.imovel_bairro, imovel_preco: a.imovel_preco,
             dt: new Date(a.dt).toISOString(), dur: a.dur, status: a.status, nota: a.nota };
           const { data, error } = await sb.from("appointments").insert(row).select().single();
           if (error) throw new Error(error.message);
