@@ -103,7 +103,7 @@
   function phoneDigits(f) { let d = (f || "").replace(/\D/g, ""); if (!d) return ""; if (d.length === 10 || d.length === 11) d = "55" + d; return d; }
   function waUrl(a) {
     const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), d = new Date(a.dt);
-    const msg = `Olá ${a.cliente}! 👋 Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX Londero em ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${im.cod} (${im.endereco}). Podemos confirmar?`;
+    const msg = `Olá ${a.cliente}! Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX Londero ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${im.cod} (${im.endereco}). Podemos confirmar?`;
     return "https://wa.me/" + phoneDigits(a.telefone) + "?text=" + encodeURIComponent(msg);
   }
 
@@ -373,7 +373,7 @@
   function renderFree() {
     const el = $("freeSlots"), now = new Date(), taken = takenSet(now);
     const free = HORAS.filter((h) => { if (taken.has(h)) return false; const [hh, mm] = h.split(":").map(Number); return atTime(now, hh, mm) > now; }).slice(0, 6);
-    if (!free.length) { el.innerHTML = `<span style="font-size:12.5px;color:var(--txt-2)">Agenda de hoje completa 🎉</span>`; return; }
+    if (!free.length) { el.innerHTML = `<span style="font-size:12.5px;color:var(--txt-2)">Nenhum horário livre hoje</span>`; return; }
     el.innerHTML = free.map((h) => `<button class="slot" data-slot="${h}">${h}</button>`).join("");
   }
 
