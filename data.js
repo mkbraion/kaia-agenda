@@ -34,19 +34,19 @@
   const LS_SESSION = "kaia_session_v1";
 
   const DEMO_CORRETORES = [
-    { id: "c1", nome: "Nelson Neto", cor: "#7C5CFC" },
-    { id: "c2", nome: "Pedro Nunes", cor: "#00E5CC" },
-    { id: "c3", nome: "Gustavo Vieira", cor: "#FFB547" },
+    { id: "c1", nome: "Nelson Neto", cor: "#D4AF37" },
+    { id: "c2", nome: "Pedro Nunes", cor: "#B87333" },
+    { id: "c3", nome: "Gustavo Vieira", cor: "#9CA3AF" },
   ];
 
   async function demoSeedUsers() {
     const pass = await hash("demo1234");
     const now = Date.now();
     const users = [
-      { id: "admin1", nome: "Londero", email: OWNER || "londero@remax.com", telefone: "", role: "admin", cor: "#7C5CFC", ativo: true, created_at: now - 86400000 * 40, last_sign_in: now, passHash: pass },
-      { id: "c1", nome: "Nelson Neto", email: "nelson@remaxlondero.com", telefone: "", role: "corretor", cor: "#7C5CFC", ativo: true, created_at: now - 86400000 * 30, last_sign_in: now - 3600000 * 5, passHash: pass },
-      { id: "c2", nome: "Pedro Nunes", email: "pedro@remaxlondero.com", telefone: "", role: "corretor", cor: "#00E5CC", ativo: true, created_at: now - 86400000 * 24, last_sign_in: now - 3600000 * 26, passHash: pass },
-      { id: "c3", nome: "Gustavo Vieira", email: "gustavo@remaxlondero.com", telefone: "", role: "corretor", cor: "#FFB547", ativo: true, created_at: now - 86400000 * 18, last_sign_in: now - 3600000 * 2, passHash: pass },
+      { id: "admin1", nome: "Londero", email: OWNER || "londero@remax.com", telefone: "", role: "admin", cor: "#D4AF37", ativo: true, created_at: now - 86400000 * 40, last_sign_in: now, passHash: pass },
+      { id: "c1", nome: "Nelson Neto", email: "nelson@remaxlondero.com", telefone: "", role: "corretor", cor: "#D4AF37", ativo: true, created_at: now - 86400000 * 30, last_sign_in: now - 3600000 * 5, passHash: pass },
+      { id: "c2", nome: "Pedro Nunes", email: "pedro@remaxlondero.com", telefone: "", role: "corretor", cor: "#B87333", ativo: true, created_at: now - 86400000 * 24, last_sign_in: now - 3600000 * 26, passHash: pass },
+      { id: "c3", nome: "Gustavo Vieira", email: "gustavo@remaxlondero.com", telefone: "", role: "corretor", cor: "#9CA3AF", ativo: true, created_at: now - 86400000 * 18, last_sign_in: now - 3600000 * 2, passHash: pass },
     ];
     localStorage.setItem(LS_USERS, JSON.stringify(users));
     return users;
@@ -135,7 +135,7 @@
           if (!data || !data.user) return null;
           const u = data.user;
           const { data: p } = await sb.from("profiles").select("*").eq("id", u.id).maybeSingle();
-          return p ? { id: u.id, email: u.email, nome: p.nome, role: p.role, cor: p.cor, ativo: p.ativo } : { id: u.id, email: u.email, nome: (u.email || "").split("@")[0], role: "corretor", cor: "#7C5CFC", ativo: true };
+          return p ? { id: u.id, email: u.email, nome: p.nome, role: p.role, cor: p.cor, ativo: p.ativo } : { id: u.id, email: u.email, nome: (u.email || "").split("@")[0], role: "corretor", cor: "#D4AF37", ativo: true };
         }
         const sid = localStorage.getItem(LS_SESSION); if (!sid) return null;
         const u = (await demoUsers()).find((x) => x.id === sid); if (!u) return null;
@@ -170,7 +170,7 @@
         }
         const users = await demoUsers();
         if (users.some((x) => (x.email || "").toLowerCase() === email)) throw new Error("Já existe uma conta com este e-mail.");
-        const cores = ["#7C5CFC", "#00E5CC", "#FFB547", "#00E5A0", "#FF4D6D"];
+        const cores = ["#D4AF37", "#B87333", "#9CA3AF", "#5FB98A", "#D9736B"];
         const u = { id: rid("u"), nome, email, telefone: "", role: email === OWNER ? "admin" : "corretor",
           cor: cores[users.length % cores.length], ativo: true, created_at: Date.now(), last_sign_in: Date.now(), passHash: await hash(password) };
         users.push(u); demoSaveUsers(users); localStorage.setItem(LS_SESSION, u.id);
@@ -233,7 +233,7 @@
          Supabase temporário (sem persistir sessão) para NÃO deslogar o admin. */
       async create(nome, email, senha) {
         nome = (nome || "").trim(); email = (email || "").trim().toLowerCase();
-        const cores = ["#7C5CFC", "#00E5CC", "#FFB547", "#00E5A0", "#FF4D6D", "#9E82FF"];
+        const cores = ["#D4AF37", "#B87333", "#9CA3AF", "#5FB98A", "#D9736B", "#9E82FF"];
         if (SUPA_ON) {
           const tmp = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY,
             { auth: { persistSession: false, autoRefreshToken: false, storageKey: "kaia_tmp_" + rid("") } });

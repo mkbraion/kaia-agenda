@@ -35,11 +35,11 @@
   };
 
   const TYPES = {
-    visita: { label: "Visita", color: "#7C5CFC", icon: I.home },
-    avaliacao: { label: "Avaliação", color: "#00E5CC", icon: I.tag },
-    reuniao: { label: "Reunião", color: "#FFB547", icon: I.chat },
-    assinatura: { label: "Assinatura", color: "#00E5A0", icon: I.doc },
-    captacao: { label: "Captação", color: "#FF4D6D", icon: I.key },
+    visita: { label: "Visita", color: "#D4AF37", icon: I.home },
+    avaliacao: { label: "Avaliação", color: "#C08A5E", icon: I.tag },
+    reuniao: { label: "Reunião", color: "#E0A23C", icon: I.chat },
+    assinatura: { label: "Assinatura", color: "#5FB98A", icon: I.doc },
+    captacao: { label: "Captação", color: "#D9736B", icon: I.key },
   };
   const HORAS = ["08:00","09:00","10:00","11:00","12:00","14:00","15:00","16:00","17:00","18:00","19:00"];
 
@@ -106,7 +106,7 @@
   let form = { tipo: "visita", corr: null, hora: null, dur: 45 };
   let cdTimer = null, clockTimer = null;
 
-  const corrById = (id) => corretores.find((c) => c.id === id) || { id: id, nome: "—", cor: "#4A5568" };
+  const corrById = (id) => corretores.find((c) => c.id === id) || { id: id, nome: "—", cor: "#6E675B" };
   const isActive = (a) => a.status !== "cancelado";
   const isUpcoming = (a) => a.dt > Date.now() && isActive(a) && a.status !== "concluido" && a.status !== "faltou";
   const nextAppt = () => appts.filter(isUpcoming).sort((a, b) => a.dt - b.dt)[0] || null;
@@ -482,7 +482,7 @@
     $("uBody").innerHTML = users.map((u) => {
       const self = CUR && u.id === CUR.id;
       return `<tr data-uid="${u.id}">
-        <td data-l="Usuário"><div class="u-user"><span class="avatar" style="background:linear-gradient(135deg,${u.cor || "#7C5CFC"},color-mix(in srgb,${u.cor || "#7C5CFC"} 55%,#000))">${initials(u.nome)}</span><div><div class="un">${esc(u.nome)}${self ? " · você" : ""}</div><div class="ue">${esc(u.email || "")}</div></div></div></td>
+        <td data-l="Usuário"><div class="u-user"><span class="avatar" style="background:linear-gradient(135deg,${u.cor || "#D4AF37"},color-mix(in srgb,${u.cor || "#D4AF37"} 55%,#000))">${initials(u.nome)}</span><div><div class="un">${esc(u.nome)}${self ? " · você" : ""}</div><div class="ue">${esc(u.email || "")}</div></div></div></td>
         <td data-l="Cargo"><select class="input u-role" data-uid="${u.id}" style="padding:7px 9px;font-size:12.5px;width:auto" ${self ? "disabled" : ""}>
             <option value="corretor" ${u.role === "corretor" ? "selected" : ""}>Corretor</option>
             <option value="gestor" ${u.role === "gestor" ? "selected" : ""}>Gestor</option>
