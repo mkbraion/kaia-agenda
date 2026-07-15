@@ -233,7 +233,8 @@ a{color:var(--primary-light)}
 .appt:hover .menu-btn{opacity:1}
 .appt .menu-btn:hover{background:var(--surface);color:var(--txt)}
 .appt .menu-btn svg{width:16px;height:16px}
-.cardmenu{position:absolute;top:38px;right:10px;z-index:5;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5);padding:6px;min-width:158px;display:none}
+.cardmenu{position:absolute;top:38px;right:10px;z-index:5;background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5);padding:6px;min-width:194px;display:none}
+.cm-div{height:1px;background:var(--border);margin:5px 8px}
 .cardmenu.open{display:block}
 .cardmenu button{display:flex;align-items:center;gap:9px;width:100%;border:none;background:transparent;color:var(--txt);font-size:13px;font-weight:600;padding:9px 10px;border-radius:8px;cursor:pointer;text-align:left}
 .cardmenu button:hover{background:var(--card-2)}
@@ -379,6 +380,13 @@ a{color:var(--primary-light)}
 .admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .admin-note{margin-top:16px;font-size:12.5px;color:var(--txt-2);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;line-height:1.6;display:flex;gap:11px}
 .admin-note svg{width:18px;height:18px;color:var(--primary-light);flex:0 0 auto;margin-top:1px}
+.add-corr{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:18px;margin-bottom:18px}
+.add-corr h3{margin:0 0 4px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:9px}
+.add-corr h3 svg{width:19px;height:19px;color:var(--primary-light)}
+.add-corr .ac-sub{margin:0 0 14px;font-size:12.5px;color:var(--txt-2);line-height:1.5}
+.add-corr-row{display:grid;grid-template-columns:1.2fr 1.4fr 1fr auto;gap:10px;align-items:center}
+.add-corr-row .btn-primary{white-space:nowrap;justify-content:center;padding:12px 20px}
+@media (max-width:760px){ .add-corr-row{grid-template-columns:1fr} }
 
 /* ===== animações ===== */
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}

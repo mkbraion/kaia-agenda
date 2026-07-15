@@ -29,6 +29,9 @@
     eye:'<svg viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>',
     eyeOff:'<svg viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 6.2A9.7 9.7 0 0112 6c6.5 0 10 6 10 6a17 17 0 01-3.2 3.9M6.2 6.2A17 17 0 002 12s3.5 7 10 7a9.6 9.6 0 004-.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     reset:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8 8 8 0 00-6 2.7M4 4v4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    mail:'<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    whats:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 20l1.3-3.9A8 8 0 1112 20a8 8 0 01-4.1-1.1L4 20z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.2 8.6c-.2 0-.5 0-.7.4-.2.4-.8 1-.8 2s.8 2.2 1 2.4c.1.2 1.6 2.6 4 3.5 1.9.7 2.3.6 2.7.5.4 0 1.3-.5 1.5-1s.2-1 .1-1l-.6-.3-1.4-.7c-.2-.1-.4-.1-.5.1l-.6.8c-.1.1-.3.2-.5.1-.6-.2-1.3-.6-2-1.4-.5-.6-.9-1.3-1-1.5-.1-.2 0-.3.1-.4l.4-.5c.1-.2.1-.3 0-.5l-.7-1.6c-.1-.4-.3-.4-.5-.4z" fill="currentColor"/></svg>',
+    userplus:'<svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M3 20c0-3.3 2.7-5 6-5 1.2 0 2.4.3 3.3.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 14v6M15 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   };
 
   const TYPES = {
@@ -82,6 +85,27 @@
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
   const initials = (n) => (n || "?").split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]).join("").toUpperCase();
   const statusLabel = (s) => ({ confirmado: "Confirmado", pendente: "A confirmar", concluido: "Concluído", faltou: "Não compareceu", cancelado: "Cancelado" }[s] || s);
+
+  /* ---------- links de compartilhamento (1 toque, sem configuração) ---------- */
+  function calStamp(d) { return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + "T" + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + "00Z"; }
+  function calUrl(a) {
+    const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), s = new Date(a.dt), e = new Date(a.dt + a.dur * 60000);
+    const details = `Imóvel ${im.cod} — ${im.endereco}\nCliente: ${a.cliente}${a.telefone && a.telefone !== "—" ? " · " + a.telefone : ""}${a.nota ? "\n" + a.nota : ""}`;
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(`${t.label} — ${a.cliente}`) +
+      "&dates=" + calStamp(s) + "/" + calStamp(e) + "&details=" + encodeURIComponent(details) + "&location=" + encodeURIComponent(im.endereco);
+  }
+  function mailUrl(a) {
+    const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), d = new Date(a.dt);
+    const su = `${t.label} — ${im.cod} · ${relDayShort(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const body = `Olá ${a.cliente},\n\nConfirmando sua ${t.label.toLowerCase()} com a RE/MAX Londero:\n\n• Imóvel: ${im.cod} — ${im.endereco}\n• Data: ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}\n\nQualquer dúvida, estou à disposição.`;
+    return "https://mail.google.com/mail/?view=cm&fs=1&su=" + encodeURIComponent(su) + "&body=" + encodeURIComponent(body);
+  }
+  function phoneDigits(f) { let d = (f || "").replace(/\D/g, ""); if (!d) return ""; if (d.length <= 11 && d.slice(0, 2) !== "55") d = "55" + d; return d; }
+  function waUrl(a) {
+    const t = TYPES[a.tipo] || TYPES.visita, im = imById(a.imovel_cod), d = new Date(a.dt);
+    const msg = `Olá ${a.cliente}! 👋 Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX Londero em ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${im.cod} (${im.endereco}). Podemos confirmar?`;
+    return "https://wa.me/" + phoneDigits(a.telefone) + "?text=" + encodeURIComponent(msg);
+  }
 
   /* ---------- estado ---------- */
   let CUR = null;                 // usuário logado
@@ -262,6 +286,11 @@
       <div class="cardmenu" id="menu-${a.id}">
         <button data-act="confirmar" data-id="${a.id}">${I.check} Confirmar</button>
         <button data-act="concluir" data-id="${a.id}">${I.check} Marcar concluído</button>
+        <div class="cm-div"></div>
+        <button data-share="cal" data-id="${a.id}">${I.calendar} Google Agenda</button>
+        <button data-share="mail" data-id="${a.id}">${I.mail} Enviar e-mail</button>
+        <button data-share="wa" data-id="${a.id}">${I.whats} Lembrar no WhatsApp</button>
+        <div class="cm-div"></div>
         <button class="danger" data-act="cancelar" data-id="${a.id}">${I.x} Cancelar</button>
       </div></div>`;
   }
@@ -451,6 +480,24 @@
         </div></td></tr>`;
     }).join("");
   }
+  async function addCorretor() {
+    const nome = $("acNome").value.trim(), email = $("acEmail").value.trim(), senha = $("acSenha").value;
+    const err = $("acErr");
+    const fail = (m) => { err.textContent = m; err.classList.add("show"); };
+    if (nome.length < 2) return fail("Digite o nome do corretor.");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail("Digite um e-mail válido.");
+    if (senha.length < 6) return fail("A senha inicial precisa de pelo menos 6 caracteres.");
+    err.classList.remove("show");
+    const btn = $("acBtn"); btn.disabled = true; btn.textContent = "Adicionando…";
+    try {
+      await Data.users.create(nome, email, senha);
+      $("acNome").value = ""; $("acEmail").value = ""; $("acSenha").value = "";
+      corretores = await Data.corretores.list();
+      toast("Corretor adicionado", `${nome} já pode entrar com a senha inicial.`);
+      await renderAdmin();
+    } catch (e) { fail(e.message || "Não foi possível adicionar."); }
+    finally { btn.disabled = false; btn.textContent = "Adicionar"; }
+  }
   async function adminAction(uid, action, value) {
     try {
       if (action === "role") { await Data.users.update(uid, { role: value }); toast("Cargo atualizado"); }
@@ -492,6 +539,8 @@
     $("umAdmin").addEventListener("click", () => { $("userMenu").classList.remove("open"); showAdmin(); });
     $("umLogout").addEventListener("click", doLogout);
     $("adminBack").addEventListener("click", async () => { showView("app"); renderAll(); });
+    $("acBtn").addEventListener("click", addCorretor);
+    $("acSenha").addEventListener("keydown", (e) => { if (e.key === "Enter") addCorretor(); });
 
     // admin delegation
     $("uBody").addEventListener("click", (e) => { const b = e.target.closest("[data-uact]"); if (!b || b.disabled) return; adminAction(b.dataset.uid, b.dataset.uact); });
@@ -503,6 +552,7 @@
       const cf = e.target.closest("[data-corr]"); if (cf) { corrFilter = corrFilter === cf.dataset.corr ? null : cf.dataset.corr; renderCorr(); renderAgenda(); return; }
       const sl = e.target.closest("[data-slot]"); if (sl) { openSheet({ hora: sl.dataset.slot }); return; }
       const mb = e.target.closest("[data-menu]"); if (mb) { e.stopPropagation(); const m = $("menu-" + mb.dataset.menu); document.querySelectorAll(".cardmenu.open").forEach((x) => { if (x !== m) x.classList.remove("open"); }); m.classList.toggle("open"); return; }
+      const sh = e.target.closest("[data-share]"); if (sh) { e.stopPropagation(); const a = appts.find((x) => x.id === sh.dataset.id); if (a) { const u = sh.dataset.share === "cal" ? calUrl(a) : sh.dataset.share === "mail" ? mailUrl(a) : waUrl(a); if (sh.dataset.share === "wa" && !phoneDigits(a.telefone)) { toast("Sem telefone", "Esse cliente não tem telefone cadastrado.", "warn"); } else { window.open(u, "_blank", "noopener"); } } document.querySelectorAll(".cardmenu.open").forEach((x) => x.classList.remove("open")); return; }
       const ab = e.target.closest("[data-act]"); if (ab) { e.stopPropagation(); act(ab.dataset.id, ab.dataset.act); document.querySelectorAll(".cardmenu.open").forEach((x) => x.classList.remove("open")); return; }
       if (!e.target.closest("#userChip") && !e.target.closest("#userMenu")) $("userMenu").classList.remove("open");
       document.querySelectorAll(".cardmenu.open").forEach((x) => x.classList.remove("open"));

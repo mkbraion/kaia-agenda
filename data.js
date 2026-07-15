@@ -218,6 +218,30 @@
 
     /* ---------- painel do dono (admin) ---------- */
     users: {
+      /* admin cria o acesso de um corretor. No modo real usa um cliente
+         Supabase temporário (sem persistir sessão) para NÃO deslogar o admin. */
+      async create(nome, email, senha) {
+        nome = (nome || "").trim(); email = (email || "").trim().toLowerCase();
+        const cores = ["#7C5CFC", "#00E5CC", "#FFB547", "#00E5A0", "#FF4D6D", "#9E82FF"];
+        if (SUPA_ON) {
+          const tmp = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY,
+            { auth: { persistSession: false, autoRefreshToken: false, storageKey: "kaia_tmp_" + rid("") } });
+          const { data, error } = await tmp.auth.signUp({ email, password: senha, options: { data: { nome } } });
+          if (error) throw new Error(mapErr(error.message));
+          try {
+            const { count } = await sb.from("profiles").select("*", { count: "exact", head: true }).in("role", ["corretor", "gestor"]);
+            const cor = cores[(count || 0) % cores.length];
+            if (data && data.user) await sb.from("profiles").update({ nome, cor }).eq("id", data.user.id);
+          } catch (e) {}
+          await tmp.auth.signOut().catch(() => {});
+          return true;
+        }
+        const users = await demoUsers();
+        if (users.some((x) => (x.email || "").toLowerCase() === email)) throw new Error("Já existe uma conta com este e-mail.");
+        const n = users.filter((u) => u.role === "corretor" || u.role === "gestor").length;
+        users.push({ id: rid("u"), nome, email, telefone: "", role: "corretor", cor: cores[n % cores.length], ativo: true, created_at: Date.now(), last_sign_in: null, passHash: await hash(senha) });
+        demoSaveUsers(users); return true;
+      },
       async list() {
         if (SUPA_ON) {
           const { data, error } = await sb.from("profiles").select("*").order("created_at");
