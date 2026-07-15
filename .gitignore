@@ -1,0 +1,12 @@
+# Dependências / build
+node_modules/
+.vercel/
+.DS_Store
+*.log
+
+# NÃO comitar segredos de servidor.
+# (config.js só tem a chave ANON pública do Supabase, que pode ir pro repo;
+#  a service_role NUNCA deve entrar aqui.)
+.env
+.env.*
+service-role.txt
