@@ -11,7 +11,8 @@
   --r-lg:20px; --r:18px; --r-sm:14px; --r-chip:12px; --r-pill:999px;
   --shadow:0 8px 24px rgba(0,0,0,.5);
   --glow:0 10px 30px rgba(212,175,55,.28);
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  --font:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  --font-display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -26,6 +27,18 @@ body{
 ::selection{background:rgba(212,175,55,.35)}
 button{font-family:inherit}
 .tnum{font-variant-numeric:tabular-nums}
+
+/* ===== Tipografia de luxo — serif elegante nos títulos/números ===== */
+.auth-logo h1, .brand-txt h1, .hello .line, .auth-hero h2, .auth-title,
+.admin-title, .kpi .val, .spot .cd, .spot .sp-cli, .sheet-h h2{
+  font-family:var(--font-display); font-weight:600; letter-spacing:.2px;
+}
+.auth-logo h1, .brand-txt h1{font-size:22px; font-weight:700; letter-spacing:.3px}
+.hello .line{font-weight:500; letter-spacing:.2px}
+.hello .line b{font-weight:700}
+.auth-hero h2{font-size:38px; font-weight:600; line-height:1.12}
+.kpi .val{font-weight:600; letter-spacing:0}
+.spot .cd{font-weight:600; letter-spacing:0}
 a{color:var(--primary-light)}
 
 /* views (SPA) */

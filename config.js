@@ -15,7 +15,7 @@ window.KAIA_CONFIG = {
   SUPABASE_ANON_KEY: "sb_publishable_o3sSBkN8QKNzQ9Hmm9KAfA_Xg5gKZF0",
 
   // Nome do escritório mostrado no topo.
-  ESCRITORIO: "RE/MAX Londero",
+  ESCRITORIO: "RE/MAX",
 
   // E-mail do DONO/desenvolvedor. Em modo demo, esta conta entra
   // automaticamente como admin (acesso ao painel de usuários).

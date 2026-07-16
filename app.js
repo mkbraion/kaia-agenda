@@ -88,13 +88,13 @@
   function mailUrl(a) {
     const t = TYPES[a.tipo] || TYPES.visita, d = new Date(a.dt);
     const su = `${t.label} — ${relDayShort(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    const body = `Olá ${a.cliente},\n\nConfirmando sua ${t.label.toLowerCase()} com a RE/MAX Londero:\n\n• Imóvel: ${imovelFull(a)}\n• Data: ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}\n\nQualquer dúvida, estou à disposição.`;
+    const body = `Olá ${a.cliente},\n\nConfirmando sua ${t.label.toLowerCase()} com a RE/MAX:\n\n• Imóvel: ${imovelFull(a)}\n• Data: ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}\n\nQualquer dúvida, estou à disposição.`;
     return "https://mail.google.com/mail/?view=cm&fs=1&su=" + encodeURIComponent(su) + "&body=" + encodeURIComponent(body);
   }
   function phoneDigits(f) { let d = (f || "").replace(/\D/g, ""); if (!d) return ""; if (d.length === 10 || d.length === 11) d = "55" + d; return d; }
   function waUrl(a) {
     const t = TYPES[a.tipo] || TYPES.visita, d = new Date(a.dt);
-    const msg = `Olá ${a.cliente}! Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX Londero ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${imovelFull(a)}. Podemos confirmar?`;
+    const msg = `Olá ${a.cliente}! Passando pra confirmar sua ${t.label.toLowerCase()} com a RE/MAX ${relDayShort(d)} às ${pad(d.getHours())}:${pad(d.getMinutes())}, no imóvel ${imovelFull(a)}. Podemos confirmar?`;
     return "https://wa.me/" + phoneDigits(a.telefone) + "?text=" + encodeURIComponent(msg);
   }
 
