@@ -30,9 +30,11 @@ button{font-family:inherit}
 
 /* ===== Tipografia de luxo — serif elegante nos títulos/números ===== */
 .auth-logo h1, .brand-txt h1, .hello .line, .auth-hero h2, .auth-title,
-.admin-title, .kpi .val, .spot .cd, .spot .sp-cli, .sheet-h h2{
+.admin-title, .kpi .val, .spot .cd, .spot .sp-cli, .sheet-h h2, .panel-h h2, .card-sm h3{
   font-family:var(--font-display); font-weight:600; letter-spacing:.2px;
 }
+.panel-h h2{font-size:18px}
+.card-sm h3{font-size:15px}
 .auth-logo h1, .brand-txt h1{font-size:22px; font-weight:700; letter-spacing:.3px}
 .hello .line{font-weight:500; letter-spacing:.2px}
 .hello .line b{font-weight:700}
@@ -40,11 +42,21 @@ button{font-family:inherit}
 .kpi .val{font-weight:600; letter-spacing:0}
 .spot .cd{font-weight:600; letter-spacing:0}
 /* ouro metálico escovado nos destaques principais */
-.brand-txt h1, .auth-logo h1, .kpi .val, .spot .cd{
-  background:linear-gradient(180deg,var(--gold-hi) 0%,var(--primary) 50%,var(--primary-deep) 100%);
+.brand-txt h1, .auth-logo h1, .kpi .val, .spot .cd, .panel-h h2, .card-sm h3, .auth-title, .admin-title, .sheet-h h2{
+  background:linear-gradient(176deg,#FCF6DB 0%,var(--gold-hi) 24%,var(--primary) 60%,var(--primary-deep) 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
 }
 .kpi .val .suf, .spot .cd small{-webkit-text-fill-color:var(--txt-2); color:var(--txt-2); background:none}
+.card-sm h3 svg, .panel-h h2 svg{-webkit-text-fill-color:initial}
+
+/* filete dourado no topo dos cards (acabamento premium) */
+.card-sm, .add-corr, .panel{position:relative}
+.kpi::after, .card-sm::before, .panel::before, .add-corr::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px; pointer-events:none; z-index:4;
+  background:linear-gradient(90deg, transparent 6%, rgba(201,164,78,.6) 50%, transparent 94%);
+}
+/* botões dourados com aresta de metal polido */
+.btn-primary, .btn-save, .auth-submit{box-shadow:inset 0 1px 0 rgba(255,247,224,.5), var(--glow)}
 a{color:var(--primary-light)}
 
 /* views (SPA) */
